@@ -1,0 +1,51 @@
+plugins {
+  id 'java'
+  id 'application'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDir 'src'
+    }
+    resources {
+      srcDir 'config'
+    }
+  }
+}
+
+repositories {
+  jcenter()
+  maven {
+    url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+  }
+}
+
+version = '3.2.0'
+
+dependencies {
+  compile "org.slf4j:slf4j-api:1.7.21"
+  compile "ch.qos.logback:logback-classic:1.1.7"
+  compile "com.google.guava:guava:19.0"
+  compile "com.google.code.gson:gson:2.6.1"
+}
+
+mainClassName = 'com.ahanda.gson.GenTypeAdapter'
+
+shadowJar {
+  classifier = 'fat'
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.8'
+}
+
+task copyDeps(type: Copy) {
+	from (configurations.compile+configurations.testCompile) {
+		include "*.jar"
+		include ".so", ".dll"
+	}
+	into rootProject.rootDir.getAbsolutePath()+"/lib"
+	//rename can be applied on the files if you want to remove the version from the jar for instance
+}
